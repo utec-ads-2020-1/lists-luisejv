@@ -10,16 +10,36 @@ class ForwardIterator {
         Node<T> *current;
 
     public:
-        ForwardIterator();
-        ForwardIterator(Node<T>*);
+        ForwardIterator(){
+            current = nullptr;
+        };
+        ForwardIterator(Node<T> *iter){
+            current = iter;
+        };
 
-        ForwardIterator<T> operator=(ForwardIterator<T>);
+        ForwardIterator<T> operator=(ForwardIterator<T> iter){
+            return *this;
+        };
 
-        bool operator!=(ForwardIterator<T>);
+        bool operator!=(ForwardIterator<T> iter){
+            return iter.current != current;
+        };
 
-        ForwardIterator<T> operator++();
+        ForwardIterator<T> operator++(){
+            if (!current->next){
+                cout << "No se puede avanzar mas" <<endl;
+            } else {
+                return current->next;
+            }
+        };
 
-        T operator*();
+        T operator*(){
+            if (current){
+                return current->data;
+            } else {
+                cout << "El iterador es nulo" << endl;
+            }
+        };
 };
 
 #endif

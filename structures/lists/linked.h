@@ -3,6 +3,10 @@
 
 #include "list.h"
 #include "iterators/bidirectional_iterator.h"
+#include <string>
+#include <iostream>
+
+using namespace std;
 
 // TODO: Implement all methods
 template <typename T>
@@ -13,27 +17,29 @@ public:
 
     T front() override
     {
-        if (empty())
+        if (this->nodes == 0)
         {
-            throw string("La linked list esta vacia");
+            //throw string("La linked list esta vacia");
+            cout << "La linked list esta vacia." << endl;
         }
         else
         {
             return this->head->data;
         }
-    };
+    }
 
     T back() override
     {
-        if (empty())
+        if (this->nodes == 0)
         {
-            throw string("La linked list esta vacia");
+            //throw string("La linked list esta vacia");
+            cout << "La linked list esta vacia." << endl;
         }
         else
         {
             return this->tail->data;
         }
-    };
+    }
 
     void push_front(T elem) override
     {
@@ -54,7 +60,7 @@ public:
         this->nodes++;
     };
 
-    void push_back(T elem)
+    void push_back(T elem) override
     {
         Node<T> *newNode = new Node<T>();
         newNode->data = elem;
@@ -73,7 +79,7 @@ public:
         this->nodes++;
     };
 
-    void pop_front()
+    void pop_front() override
     {
         this->head = this->head->next;
         this->head->prev->killSelf();
@@ -82,7 +88,7 @@ public:
         this->nodes--;
     };
 
-    void pop_back()
+    void pop_back() override
     {
         this->tail = this->tail->prev;
         this->tail->next->killSelf();
@@ -91,23 +97,25 @@ public:
         this->nodes--;
     };
 
-    T operator[](int pos)
+    T operator[](int pos) override
     {
         if (empty())
         {
-            throw string("La linked list esta vacia.");
+            //throw string("La linked list esta vacia.");
+            cout<<"La linked list esta vacia."<<endl;
         }
         else
         {
             if (pos >= size() || pos < 0)
             {
-                throw string("Posicion incorrecta.");
+                //throw string("Posicion incorrecta.");
+                cout<<"Posicion incorrecta."<<endl;
             }
             else
             {
                 int cont = 0;
                 auto iterador = this->head;
-                while (ind != index)
+                while (cont != pos)
                 {
                     cont++;
                     iterador = iterador->next;
@@ -115,55 +123,108 @@ public:
                 return iterador->data;
             }
         }
-    };
-
-    bool empty()
+    }
+    bool empty() override
     {
         return this->head == nullptr || this->tail == nullptr;
     };
-
-    int size()
+    int size() override
     {
         return this->nodes;
     };
-
-    void clear()
+    void clear() override
     {
         while (this->head != this->tail->next)
         {
             this->head = this->head->next;
             delete this->head->prev;
+            //this->head->prev->killSelf();
         }
         this->tail = nullptr;
         this->head = this->tail;
         this->nodes = 0;
     };
-
-    void sort()
-    {
-        //Insertion Sort
-        int i, j;
-        T key;
-        for (i = 1; i < this->nodes; i++)
+    void swapValuesNodes(int j, int k){
+        auto aux = this->head;
+        auto aux2 = this->head;
+        int count = 0;
+        while (aux && count != j){
+            aux = aux->next;
+            count++;
+        }
+        count = 0;
+        while (aux2 && count != k){
+            aux2 = aux2->next;
+            count++;
+        }
+        auto temp = aux->data;
+        aux->data = aux2->data;
+        aux2->data = temp;
+    };
+    void swapValues(int j, T value){
+        auto aux = this->head;
+        int count = 0;
+        while (aux && count != j){
+            aux = aux->next;
+            count++;
+        }
+        aux->data = value;
+    }
+    //function implemented to find values in linkedlist. Only for sort purposes, so I took out validators.
+    T findValue(int pos){
+        int cont = 0;
+        auto iterador = this->head;
+        while (cont != pos)
         {
-            key = this->head->next->data;
-            j = i - 1;
-            while (j >= 0 && this[j] > key)
-            {
+            cont++;
+            iterador = iterador->next;
+        }
+        return iterador->data;
+    };
+    void sort() override
+    {
+        //Insertion sort
+        if (this->nodes != 0){
+            int i, j;
+            T key;
+            for (i = 1; i < this->nodes; i++){
+                key = findValue(i);
+                j = i - 1;
+                while (j>= 0 && findValue(j) > key){
+                    swapValuesNodes(j+1,j);
+                    j = j - 1;
+                }
+                swapValues(j+1,key);
             }
+        } else {
+            cout << "La linked list esta vacia." << endl;
         }
     };
-
-    void reverse();
-
-    BidirectionalIterator<T> begin();
-    BidirectionalIterator<T> end();
-
-    string name()
+    void reverse() override{
+        auto auxTail = this->tail;
+        auto auxHead = this->head;
+        while (auxTail != auxHead){
+            auto temp = auxTail->data;
+            auxTail->data = auxHead->data;
+            auxHead->data = temp;
+            auxTail = auxTail->prev;
+            if (auxTail==auxHead)
+                break;
+            auxHead = auxHead->next;
+        }
+    };
+    BidirectionalIterator<T> begin(){
+        BidirectionalIterator<T> iter (this->head);
+        return iter;
+    };
+    BidirectionalIterator<T> end(){
+        BidirectionalIterator<T> iter (this->tail);
+        return iter;
+    };
+    string name() override
     {
         return "Linked List";
-    }
-
+    };
     /**
          * Merges x into the list by transferring all of its elements at their respective 
          * ordered positions into the container (both containers shall already be ordered).
@@ -174,7 +235,47 @@ public:
          * any element: they are transferred, no matter whether x is an lvalue or an rvalue, 
          * or whether the value_type supports move-construction or not.
         */
-    void merge(LinkedList<T> &);
+    void merge(LinkedList<T> & newList){
+        this->sort();
+        newList.sort();
+        Node<T> *auxNewList = newList.head;
+        auto auxOGList = this->head;
+        while(auxNewList){
+            //cout << auxNewList->data << " " << auxOGList->data << endl;
+            if (auxNewList->data < auxOGList->data){
+                auto temp = auxNewList;
+                if (auxNewList->next) {
+                    auxNewList = auxNewList->next;
+                    auxNewList->prev = nullptr;
+                } else {
+                    auxNewList = nullptr;
+                }
+                if (auxOGList->prev != nullptr){
+                    auxOGList->prev->next = temp;
+                    temp->prev = auxOGList->prev;
+                } else {
+                    this->head = temp;
+                }
+                this->nodes++;
+                auxOGList->prev = temp;
+                temp->next = auxOGList;
+            } else {
+                if (auxOGList->next){
+                    auxOGList = auxOGList->next;
+                } else {
+                    auxOGList->next = auxNewList;
+                    auxNewList->prev = auxOGList;
+                    while(auxNewList){
+                        this->nodes++;
+                        auxNewList = auxNewList->next;
+                    }
+                    this->tail = newList.tail;
+                    break;
+                }
+            }
+        }
+    };
+
 };
 
 #endif

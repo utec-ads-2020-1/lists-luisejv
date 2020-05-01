@@ -2,6 +2,9 @@
 #define LIST_H
 
 #include "node.h"
+#include <string>
+
+using namespace std;
 
 // TODO: Implement all methods
 template <typename T>
@@ -29,5 +32,15 @@ class List {
         virtual void reverse() = 0;
         virtual string name() = 0;
 };
+
+template<typename T>
+List<T>::~List() {
+    auto it = head;
+    while (it != tail){
+        head->killSelf();
+    }
+    delete head;
+    delete tail;
+}
 
 #endif
