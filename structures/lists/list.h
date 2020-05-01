@@ -13,6 +13,7 @@ class List {
         Node<T>* head;
         Node<T>* tail;
         int nodes;
+        bool merged = false;
 
     public:
         List() : head(nullptr), tail(nullptr), nodes(0) {};
@@ -34,13 +35,6 @@ class List {
 };
 
 template<typename T>
-List<T>::~List() {
-    auto it = head;
-    while (it != tail){
-        head->killSelf();
-    }
-    delete head;
-    delete tail;
-}
+List<T>::~List() = default;
 
 #endif

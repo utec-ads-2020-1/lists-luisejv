@@ -126,13 +126,17 @@ class CircularLinkedList : public List<T> {
             return this->nodes;
         };
         void clear() override {
-            while(this->head != this->head->prev){
-                auto aux = this->head->next;
-                this->head->killSelf();
-                this->head = aux;
+            if (this->head != nullptr){
+                auto temp = this->head;
+                while(this->head != temp->prev){
+                    auto aux = this->head->next;
+                    delete this->head;
+                    this->head = aux;
+                }
+                delete this->head;
+                this->nodes = 0;
             }
-            this->head->killSelf();
-            this->nodes = 0;
+            this->head = nullptr;
         };
         void swapValuesNodes(int j, int k){
             //cout << "swapValuesNode: " << this->head->data << " " << this->tail << ":"<< this->tail->data << endl;
@@ -264,7 +268,14 @@ class CircularLinkedList : public List<T> {
                     }
                 }
             }
+            newList.merged = true;
         };
+
+        ~CircularLinkedList(){
+            if (!this->merged){
+                this->clear();
+            }
+        }
 };
 
 #endif

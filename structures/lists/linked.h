@@ -43,7 +43,7 @@ public:
 
     void push_front(T elem) override
     {
-        Node<T> *newNode = new Node<T>();
+        auto *newNode = new Node<T>();
         newNode->data = elem;
         newNode->prev = nullptr;
         if (this->head == nullptr)
@@ -62,7 +62,7 @@ public:
 
     void push_back(T elem) override
     {
-        Node<T> *newNode = new Node<T>();
+        auto newNode = new Node<T>();
         newNode->data = elem;
         newNode->next = nullptr;
         if (this->tail == nullptr)
@@ -134,15 +134,20 @@ public:
     };
     void clear() override
     {
-        while (this->head != this->tail->next)
-        {
-            this->head = this->head->next;
-            delete this->head->prev;
-            //this->head->prev->killSelf();
+        //cout << this->head << " " << this->tail << endl;
+        if (this->head != this->tail && this->head!= nullptr){
+            while (this->head != this->tail)
+            {
+                this->head = this->head->next;
+                delete this->head->prev;
+                //this->head->prev->killSelf();
+            }
+            //this->tail->killSelf();
+            delete this->tail;
+            this->nodes = 0;
         }
+        this->head = nullptr;
         this->tail = nullptr;
-        this->head = this->tail;
-        this->nodes = 0;
     };
     void swapValuesNodes(int j, int k){
         auto aux = this->head;
@@ -274,7 +279,14 @@ public:
                 }
             }
         }
+        newList.merged = true;
     };
+
+    ~LinkedList(){
+        if (!this->merged){
+            this->clear();
+        }
+    }
 
 };
 

@@ -29,7 +29,8 @@ class ForwardIterator {
             if (!current->next){
                 cout << "No se puede avanzar mas" <<endl;
             } else {
-                return current->next;
+                current = current->next;
+                return current;
             }
         };
 

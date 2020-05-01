@@ -88,15 +88,18 @@ class ForwardList : public List<T> {
             return this->nodes;
         };
         void clear() override {
-            while (this->head != this->tail->next){
-                auto temp = this->head->next;
-                this->head->killSelf();
-                this->head = temp;
+            if (this->head != this->tail && this->head!= nullptr){
+                while (this->head != this->tail)
+                {
+                    auto temp = this->head->next;
+                    delete this->head;
+                    this->head = temp;
+                }
+                delete this->tail;
+                this->nodes = 0;
             }
-            this->tail->killSelf();
+            this->head = nullptr;
             this->tail = nullptr;
-            this->head = this->tail;
-            this->nodes = 0;
         };
         void swapValuesNodes(int j, int k){
             //cout << "swapValuesNode: " << this->head->data << " " << this->tail << ":"<< this->tail->data << endl;
@@ -224,10 +227,6 @@ class ForwardList : public List<T> {
                         aux->next = temp;
                     }
                     this->nodes++;
-                    /*for (int i = 0; i < this->nodes; i++){
-                        cout << findValue(i) << " ";
-                    }
-                    cout << endl;*/
                 } else {
                     if (auxOGList->next){
                         auxOGList = auxOGList->next;
@@ -242,7 +241,14 @@ class ForwardList : public List<T> {
                     }
                 }
             }
+            newList.merged = true;
         };
+
+        ~ForwardList(){
+            if (!this->merged){
+                this->clear();
+            }
+        }
 };
 
 #endif

@@ -12,6 +12,11 @@ struct Node
     {
         delete this;
     };
+
+    ~Node();
 };
+
+template<typename T>
+Node<T>::~Node() = default;
 
 #endif
