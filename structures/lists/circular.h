@@ -12,6 +12,7 @@ class CircularLinkedList : public List<T> {
 
         T front() override {
             if (this->nodes == 0){
+                // Throw!
                 cout << "La circular list esta vacia." << endl;
             } else {
                 return this->head->data;
